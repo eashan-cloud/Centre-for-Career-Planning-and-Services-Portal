@@ -1,42 +1,82 @@
-import jwt from 'jsonwebtoken'
-import { config } from 'dotenv'
-import User from '../models/user.model.js';
+// middleware/auth.middleware.js
+import jwt from "jsonwebtoken";
+import { config } from "dotenv";
+import pool from "../config/postgredb.js";
+import CallLog from "../models/callLog.model.js";
 
 config();
 
 export const protectRoute = async (req, res, next) => {
-    try {
-        const token = req.headers.authorization?.split(" ")[1];
-        if (!token) {
-            return res.json({ success: false, message: 'Not Authorized. Login Again.' });
-        }
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    console.log("Token: ", token);
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        if (!decoded) {
-            return res.status(401).json({ success: false, message: 'Not Authorized. Login Again.' });
-        }
-
-        const user = await User.findById(decoded.userId).select("-password");
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-        req.userId = user._id;
-        req.user = user;
-        next();
-        
-    } catch (error) {
-        console.log("Error in protectRoute middleware: ", error.message);
-        res.status(500).json({ message: "Internal server error" });
+    if (!token) {
+      return res.status(401).json({ success: false, message: "Not Authorized. Token not found" });
     }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      // Handle token errors separately
+      return res.status(401).json({ success: false, message: "Invalid or expired token" });
+    }
+
+    console.log("Decoded Token: ", decoded);
+
+    if (!decoded?.userId) {
+      return res.status(401).json({ success: false, message: "Not Authorized. Token invalid" });
+    }
+
+    // Fetch user from PostgreSQL
+    const query = `SELECT user_id, full_name, email, role FROM users WHERE user_id = $1`;
+    const { rows } = await pool.query(query, [decoded.userId]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    req.user = rows[0];
+    req.userId = rows[0].user_id; // UUID
+    next();
+  } catch (error) {
+    console.error("Error in protectRoute middleware: ", error.message);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
 };
+
 
 export const authorizeRoles = (...roles) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
+    if (!req.user || !roles.includes(req.user.role)) {
       return res.status(403).json({ success: false, message: "Access denied" });
     }
     next();
   };
+};
+
+
+
+export const authorizeUpdateLog = async (req, res, next) => {
+  try {
+    const log = await CallLog.getLogById(req.params.id);
+    if (!log) return res.status(404).json({ success: false, message: "Log not found" });
+    const isAdmin = req.user.role === "admin";
+    const isOwner = req.user.user_id === log.caller_id;
+    const iseligibleOwner = req.user.user_id === log.caller_id && log.call_timestamp > Date.now() - 24*60*60*1000;
+
+    if( isAdmin || iseligibleOwner ){
+      next();
+    }
+    else if(isOwner){
+      return res.status(403).json({ success: false, message: "You can modify within only 24Hrs" });
+    }
+    else{
+      return res.status(403).json({ success: false, message: "Access denied" });
+    }
+  } catch (error) {
+    console.error("Error in authorizeUpdateLog middleware: ", error.message);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
 };

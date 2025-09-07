@@ -14,6 +14,9 @@ import applicationRoutes from "./application.routes.js";
 import profileRouter from "./profile.routes.js";
 import savedJobsRouter from "./savedJobs.route.js";
 
+import hrContactRoutes from "./hrContact.route.js";
+import callLogRoutes from "./callLog.routes.js";
+
 const router = express.Router();
 
 // Mount each route under /api/*
@@ -29,5 +32,8 @@ router.use("/resume", resumeRouter);
 router.use("/applications", applicationRoutes);
 router.use("/saved-jobs", savedJobsRouter);
 router.use("/profile", profileRouter);
+
+router.use("/hr-contacts", hrContactRoutes);
+router.use("/call-logs", callLogRoutes);
 
 export default router;

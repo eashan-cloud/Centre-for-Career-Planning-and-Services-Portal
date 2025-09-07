@@ -30,7 +30,7 @@ const Sidebar = () => {
         Alumni
       </NavLink>
 
-      {authUser.role === "student" && (
+      {authUser.role === "caller" && (
         <>
           <NavLink to="/profile" className={navLinkClass}>
             Profile
@@ -49,6 +49,9 @@ const Sidebar = () => {
           </NavLink>
           <NavLink to="/discussion-forum" className={navLinkClass}>
             Discussion Forum
+          </NavLink>
+          <NavLink to="/hr-contacts" className={navLinkClass}>
+            HR Contacts
           </NavLink>
         </>
       )}

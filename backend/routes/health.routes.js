@@ -94,6 +94,18 @@ router.get('/', (req, res) => {
           { method: 'POST', path: '/thread/upvote/:threadId', description: 'Upvote specific thread (requires authentication)' },
           { method: 'POST', path: '/thread/downvote/:threadId', description: 'Downvote specific thread (requires authentication)' }
         ]
+      },
+      hrContacts: {
+        baseUrl: '/hr-contacts',
+        protected: true,
+        endpoints: [
+          { method: 'GET', path: '/hr-contacts/', description: 'Get all HR contacts (requires authentication)' },
+          { method: 'GET', path: '/hr-contacts/:id', description: 'Get specific HR contact by ID (requires authentication)' },
+          { method: 'POST', path: '/hr-contacts/', description: 'Create new HR contact (requires authentication)' },
+          { method: 'PUT', path: '/hr-contacts/:id', description: 'Update specific HR contact (requires authentication)' },
+          { method: 'DELETE', path: '/hr-contacts/:id', description: 'Delete specific HR contact (requires authentication)' },
+          { method: 'GET', path: '/hr-contacts/export/csv', description: 'Export HR contacts as CSV (requires authentication)' }
+        ]
       }
     };
 

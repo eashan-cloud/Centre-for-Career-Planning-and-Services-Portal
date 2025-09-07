@@ -28,6 +28,8 @@ import Dashboard from './pages/Dashboard';
 
 import AddThread from './components/DiscussionForum/AddThread';
 
+import HRContactsPage from './pages/student/HRContactsPage';
+
 // Admin Pages Imports
 import AddAlumni from './pages/admin/AddAlumni';
 import CreateJob from './pages/admin/CreateJob';
@@ -58,6 +60,7 @@ function App() {
         <Route path='/referrals' element={<Referrals/>}/>
         <Route path='/resumebuilder' element={<ResumeBuilder/>} />
         <Route path='/alumni' element={<Alumni/>} />
+        <Route path='/hr-contacts' element={<HRContactsPage/>} />
         {!authUser && <Route path='/reset-password/:resetToken' element={<ResetPasswordPage />} />}
         <Route
           path="/admin/jobs"

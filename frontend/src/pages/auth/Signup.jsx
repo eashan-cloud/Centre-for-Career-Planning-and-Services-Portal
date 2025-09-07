@@ -126,9 +126,9 @@ function Signup() {
               required
             >
               <option value="">Choose Role</option>
-              <option value="student">Student</option>
-              <option value="recruiter">Recruiter</option>
-              <option value="admin">Admin</option>
+              <option value="caller">caller</option>
+              {/* <option value="recruiter">Recruiter</option> */}
+              <option value="admin">admin</option>
             </select>
           </div>
           {/* Submit */}
