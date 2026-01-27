@@ -5,11 +5,6 @@ const alumniSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  gender: {
-    type: String,
-    enum: ["male", "female"],
-    required: true,
-  },
   company: {
     type: String,
   },

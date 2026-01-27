@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import { MdEmail, MdSchool, MdBadge, MdWork } from "react-icons/md";
-import { FcBusinessman, FcBusinesswoman } from "react-icons/fc";
-import { FaLinkedin } from "react-icons/fa6";
+import { FaLinkedin, FaUser } from "react-icons/fa6";
 import { RiPhoneFill } from "react-icons/ri";
 import { useMenuClose } from "../utils/closeMenuEffect";
 
@@ -35,8 +34,7 @@ function AlumniCard({ alum, index, authUser, onEditAlumni, onDeleteAlumni }) {
       <div className="grid grid-cols-2">
       <div className="col-start-1 col-end-3 flex items-center gap-2">
         <div className="w-[45px] h-[45px] rounded-[50%] border flex items-center justify-center overflow-hidden">
-          {/* <img src="https://randomuser.me/api/portraits/men/29.jpg" alt="" srcset="" /> */}
-          {alum?.gender === "male" ? <FcBusinessman size={40} /> : <FcBusinesswoman size={40} />}
+          <FaUser size={28} color="#14B8A6" />
         </div>
         <h3 className="text-xl font-semibold text-[#13665b] relative bottom-1">{alum.name}</h3>
       </div>
