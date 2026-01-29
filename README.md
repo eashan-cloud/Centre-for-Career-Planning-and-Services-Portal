@@ -236,6 +236,7 @@ npm run dev
 ```
 
 Make sure backend is running before starting frontend.
+
 ---
 
 ## Environment Variables Example
