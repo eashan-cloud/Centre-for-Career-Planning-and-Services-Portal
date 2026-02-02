@@ -25,6 +25,10 @@ app.use(express.urlencoded({ extended: true }));
 // Use all API routes
 app.use("/api", apiRouter);
 
+app.get('/', (req, res) => {
+    res.send("Server is ready");
+});
+
 // Start the server
 app.listen(port, () => {
   connectDB();
