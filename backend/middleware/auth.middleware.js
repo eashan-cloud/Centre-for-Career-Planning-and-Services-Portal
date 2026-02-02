@@ -1,15 +1,15 @@
 // middleware/auth.middleware.js
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
-import pool from "../config/postgredb.js";
-import CallLog from "../models/callLog.model.js";
+import User from "../models/user.model.js";
+// import CallLog from "../models/callLog.model.js"; // CallLog uses Postgres, commenting out to prevent crash
 
 config();
 
 export const protectRoute = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
-    console.log("Token: ", token);
+    // console.log("Token: ", token);
 
     if (!token) {
       return res.status(401).json({ success: false, message: "Not Authorized. Token not found" });
@@ -23,22 +23,21 @@ export const protectRoute = async (req, res, next) => {
       return res.status(401).json({ success: false, message: "Invalid or expired token" });
     }
 
-    console.log("Decoded Token: ", decoded);
+    // console.log("Decoded Token: ", decoded);
 
     if (!decoded?.userId) {
       return res.status(401).json({ success: false, message: "Not Authorized. Token invalid" });
     }
 
-    // Fetch user from PostgreSQL
-    const query = `SELECT user_id, full_name, email, role FROM users WHERE user_id = $1`;
-    const { rows } = await pool.query(query, [decoded.userId]);
+    // Fetch user from MongoDB
+    const user = await User.findById(decoded.userId).select("-password");
 
-    if (rows.length === 0) {
+    if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    req.user = rows[0];
-    req.userId = rows[0].user_id; // UUID
+    req.user = user;
+    req.userId = user._id; 
     next();
   } catch (error) {
     console.error("Error in protectRoute middleware: ", error.message);
@@ -57,8 +56,10 @@ export const authorizeRoles = (...roles) => {
 };
 
 
-
+// HR/CallLog Logic uses Postgres, temporarily disabling/simplifying to prevent crashes if used.
 export const authorizeUpdateLog = async (req, res, next) => {
+  return res.status(503).json({ success: false, message: "Feature temporarily unavailable due to missing database configuration." });
+  /*
   try {
     const log = await CallLog.getLogById(req.params.id);
     if (!log) return res.status(404).json({ success: false, message: "Log not found" });
@@ -79,4 +80,5 @@ export const authorizeUpdateLog = async (req, res, next) => {
     console.error("Error in authorizeUpdateLog middleware: ", error.message);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
+  */
 };

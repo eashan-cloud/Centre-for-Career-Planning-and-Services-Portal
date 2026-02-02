@@ -1,0 +1,14 @@
+
+> backend@1.0.0 start
+> node server.js
+
+Server is running at port 3000
+MongoDB connected
+SMTP server is ready to take our messages
+Verification code sent successfully
+920732
+Fetched saved applications: []
+Fetched saved applications: []
+Fetched saved applications: []
+Fetched saved applications: []
+^C^C
